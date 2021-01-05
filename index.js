@@ -60,7 +60,8 @@ class Jumper {
 
     // this.mesh.rotation.x += 0.005;
     // this.mesh.rotation.y += 0.001;
-
+    this.player.tick();
+    this.player.world.step(1 / 60);
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
 
