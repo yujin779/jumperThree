@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import Stats from "stats.js";
 import { Player } from "./src/player";
+import { Floor } from "./src/floor";
 import { CannonPhysics } from "./src/cannonPhysics";
 
 import dino from "./assets/gltf/dino.glb";
@@ -16,6 +17,7 @@ class Jumper {
     this.defaultLigts();
     this.cannonPhysics = new CannonPhysics();
     this.player = new Player(this.scene, this.cannonPhysics);
+    this.floor = new Floor(this.scene, this.cannonPhysics);
   }
 
   defaultLigts() {
@@ -33,7 +35,7 @@ class Jumper {
   init() {
     this.aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 1000);
-    this.camera.position.z = 20;
+    this.camera.position.z = 40;
 
     this.controls = new OrbitControls(this.camera);
 
