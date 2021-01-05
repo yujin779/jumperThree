@@ -5,7 +5,7 @@ import CANNON from "cannon";
 import dino from "../assets/gltf/dino.glb";
 
 export class Player {
-  constructor(scene) {
+  constructor(scene, cannonPhysics) {
     //glTFの読み込み
     const loader = new GLTFLoader();
     loader.load(dino, (data) => {
@@ -16,13 +16,6 @@ export class Player {
       console.log(this.object);
       scene.add(this.object);
     });
-    // console.log("outer", this.object);
-    // this.object.position.set(1, 1, 1);
-    this.world = new CANNON.World();
-    this.world.gravity.set(0, -10, 0);
-    this.world.broadphase = new CANNON.NaiveBroadphase(); //ぶつかっている可能性のあるオブジェクト同士を見つける
-    this.world.solver.iterations = 8; //反復計算回数
-    this.world.solver.tolerance = 0.1; //許容値
 
     var mass = 1;
     var shape = new CANNON.Box(new CANNON.Vec3(5, 5, 5));
@@ -30,13 +23,12 @@ export class Player {
     this.phyBox = new CANNON.Body({ mass, shape });
     // this.phyBox.angularVelocity.set(0, 5, 10); //角速度
     this.phyBox.angularDamping = 0.1; //減衰率
-    this.world.add(this.phyBox);
+    cannonPhysics.world.add(this.phyBox);
   }
 
   tick() {
     if (this.object === undefined) return;
     this.object.position.copy(this.phyBox.position);
     this.object.quaternion.copy(this.phyBox.quaternion);
-    console.log(this.object.position);
   }
 }

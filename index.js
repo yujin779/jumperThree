@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import Stats from "stats.js";
 import { Player } from "./src/player";
+import { CannonPhysics } from "./src/cannonPhysics";
 
 import dino from "./assets/gltf/dino.glb";
 class Jumper {
@@ -13,7 +14,8 @@ class Jumper {
 
     this.init();
     this.defaultLigts();
-    this.player = new Player(this.scene);
+    this.cannonPhysics = new CannonPhysics();
+    this.player = new Player(this.scene, this.cannonPhysics);
   }
 
   defaultLigts() {
@@ -60,8 +62,9 @@ class Jumper {
 
     // this.mesh.rotation.x += 0.005;
     // this.mesh.rotation.y += 0.001;
+
+    this.cannonPhysics.world.step(1 / 60);
     this.player.tick();
-    this.player.world.step(1 / 60);
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
 
