@@ -17,7 +17,18 @@ class Jumper {
     this.defaultLigts();
     this.cannonPhysics = new CannonPhysics();
     this.player = new Player(this.scene, this.cannonPhysics);
-    this.floor = new Floor(this.scene, this.cannonPhysics);
+    this.floor = new Floor(
+      this.scene,
+      this.cannonPhysics,
+      [30, 0.5, 30],
+      [0, -5, 0]
+    );
+    this.floor2 = new Floor(
+      this.scene,
+      this.cannonPhysics,
+      [10, 0.5, 10],
+      [0, 0, 0]
+    );
   }
 
   defaultLigts() {

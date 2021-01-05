@@ -12,10 +12,14 @@ export class Player {
     const loader = new GLTFLoader();
     loader.load(dino, (data) => {
       this.object = data.scene;
+      //物理設定ボックスとの位置調整
+      this.object.position.y = -1.1;
+      this.object.position.x = -0.3;
       this.group.add(this.object);
     });
 
-    const args = [5, 5, 5];
+    //物理設定ボックスのサイズ
+    const args = [1.6, 2.3, 5];
 
     // 物理設定
     var mass = 1;
@@ -46,7 +50,7 @@ export class Player {
 
   tick() {
     if (this.object === undefined) return;
-    this.phyBox.position.x -= 0.01;
+    // this.phyBox.position.x -= 0.01;
     // 物理更新
     this.group.position.copy(this.phyBox.position);
     this.group.quaternion.copy(this.phyBox.quaternion);
