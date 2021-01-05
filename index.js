@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import Stats from "stats.js";
+import { Player } from "./src/player";
+
 import dino from "./assets/gltf/dino.glb";
 class Jumper {
   constructor() {
@@ -11,7 +13,7 @@ class Jumper {
 
     this.init();
     this.defaultLigts();
-    this.load();
+    this.player = new Player(this.scene);
   }
 
   defaultLigts() {
@@ -26,21 +28,6 @@ class Jumper {
     this.scene.add(axis);
   }
 
-  load() {
-    //glTFの読み込み
-    const loader = new GLTFLoader();
-    console.log("start");
-    console.log(loader);
-    console.log(dino);
-    loader.load(dino, (data) => {
-      this.object = data.scene;
-      // //拡大
-      // let scale = 5;
-      // this.object.scale.set(scale, scale, scale);
-      this.scene.add(this.object);
-    });
-  }
-
   init() {
     this.aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 1000);
@@ -48,13 +35,8 @@ class Jumper {
 
     this.controls = new OrbitControls(this.camera);
 
-    // this.geometry = new THREE.BoxBufferGeometry(200, 200, 200);
-    // this.material = new THREE.MeshNormalMaterial();
-    // this.mesh = new THREE.Mesh(this.geometry, this.material);
-
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("#191919");
-    // this.scene.add(this.mesh);
 
     this.renderer = new THREE.WebGLRenderer({
       powerPreference: "high-performance",
