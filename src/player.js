@@ -33,7 +33,7 @@ export class Player {
     // );
     // this.phyBox.angularVelocity.set(0, 5, 10); //角速度
     this.phyBox.angularDamping = 0.1; //減衰率
-    this.phyBox.position.y = 25;
+    this.phyBox.position.y = 5;
     cannonPhysics.world.add(this.phyBox);
 
     // 物理設定のサイズをボックスで描画
@@ -46,10 +46,13 @@ export class Player {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     this.group.add(cube);
     scene.add(this.group);
-  }
 
-  click() {
-    console.log("player junp");
+    this.click = () => {
+      this.phyBox.applyImpulse(
+        new CANNON.Vec3(0, 20, 0),
+        new CANNON.Vec3(0, 0, 0)
+      );
+    };
   }
 
   tick() {
