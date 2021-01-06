@@ -32,9 +32,13 @@ export class Player {
     //   -Math.PI / 2
     // );
     // this.phyBox.angularVelocity.set(0, 5, 10); //角速度
-    this.phyBox.angularDamping = 0.1; //減衰率
-    this.phyBox.position.y = 5;
+    // this.phyBox.angularDamping = 0.1; //減衰率
+    this.phyBox.fixedRotation = true;
+    // this.phyBox.inertia.set(0, 0, 0);
+    this.phyBox.position.y = 50;
+    // this.fixedQuaternion = new CANNON.Quaternion(0, 0, 0, 1);
     cannonPhysics.world.add(this.phyBox);
+    console.log(this.phyBox);
 
     // 物理設定のサイズをボックスで描画
     let cubeGeometry = new THREE.BoxGeometry(args[0], args[1], args[2]);
@@ -57,6 +61,10 @@ export class Player {
 
   tick() {
     if (this.object === undefined) return;
+    // 角度とxポジションを固定
+    this.phyBox.quaternion = new CANNON.Quaternion(0, 0, 0, 1);
+    this.phyBox.position.x = 0;
+    this.phyBox.position.z = 0;
     // this.phyBox.position.x -= 0.01;
     // 物理更新
     this.group.position.copy(this.phyBox.position);
