@@ -14,9 +14,10 @@ export class Floor {
       new CANNON.Vec3(size[0] / 2, size[1] / 2, size[2] / 2)
     );
     this.phyBox = new CANNON.Body({ mass: 0, shape: shape });
+    this.phyBox.name = "floor";
     this.phyBox.position.set(position[0], position[1], position[2]);
     cannonPhysics.world.add(this.phyBox);
-
+    console.log("phBox", this.phyBox);
     // 物理設定のサイズをボックスで描画
     let cubeGeometry = new THREE.BoxGeometry(size[0], size[1], size[2]);
     let cubeMaterial = new THREE.MeshStandardMaterial({

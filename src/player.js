@@ -7,6 +7,7 @@ import dino from "../assets/gltf/dino.glb";
 export class Player {
   constructor(scene, cannonPhysics) {
     this.group = new THREE.Group();
+    this.landing = false;
 
     //glTFの読み込み
     const loader = new GLTFLoader();
@@ -52,11 +53,18 @@ export class Player {
     scene.add(this.group);
 
     this.click = () => {
-      this.phyBox.applyImpulse(
-        new CANNON.Vec3(0, 20, 0),
-        new CANNON.Vec3(0, 0, 0)
-      );
+      if (this.landing) {
+        this.phyBox.applyImpulse(
+          new CANNON.Vec3(0, 20, 0),
+          new CANNON.Vec3(0, 0, 0)
+        );
+        this.landing = false;
+      }
     };
+    this.phyBox.addEventListener("collide", (e) => {
+      console.log("collide", e.contact.bj.name);
+      if (e.contact.bj.name === "floor") this.landing = true;
+    });
   }
 
   tick() {

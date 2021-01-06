@@ -18,13 +18,13 @@ class Jumper {
     this.floor = new Floor(
       this.scene,
       this.cannonPhysics,
-      [30, 0.5, 30],
-      [0, -5, 0]
+      [10, 0.5, 10],
+      [0, 10, 0]
     );
     this.floor2 = new Floor(
       this.scene,
       this.cannonPhysics,
-      [10, 0.5, 10],
+      [150, 0.5, 30],
       [0, 0, 0]
     );
     // クリックしたらダイナソーをジャンプ
