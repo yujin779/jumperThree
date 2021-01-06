@@ -1,12 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import Stats from "stats.js";
 import { Player } from "./src/player";
 import { Floor } from "./src/floor";
 import { CannonPhysics } from "./src/cannonPhysics";
 
-import dino from "./assets/gltf/dino.glb";
 class Jumper {
   constructor() {
     this.init = this.init.bind(this);
@@ -29,6 +27,8 @@ class Jumper {
       [10, 0.5, 10],
       [0, 0, 0]
     );
+    // クリックしたらダイナソーをジャンプ
+    this.canvas.addEventListener("click", this.player.click);
   }
 
   defaultLigts() {
@@ -52,8 +52,9 @@ class Jumper {
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("#191919");
-
+    this.canvas = document.querySelector("#app");
     this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
       powerPreference: "high-performance",
       antialias: true,
     });
@@ -72,9 +73,6 @@ class Jumper {
 
   animate() {
     this.stats.begin();
-
-    // this.mesh.rotation.x += 0.005;
-    // this.mesh.rotation.y += 0.001;
 
     this.cannonPhysics.world.step(1 / 60);
     this.player.tick();

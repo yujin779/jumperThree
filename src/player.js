@@ -19,7 +19,7 @@ export class Player {
     });
 
     //物理設定ボックスのサイズ
-    const args = [1.6, 2.3, 5];
+    const args = [1.6, 2.3, 2];
 
     // 物理設定
     var mass = 1;
@@ -46,6 +46,10 @@ export class Player {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     this.group.add(cube);
     scene.add(this.group);
+  }
+
+  click() {
+    console.log("player junp");
   }
 
   tick() {
