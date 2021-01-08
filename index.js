@@ -5,10 +5,11 @@ import { Player } from "./src/player";
 import { Enemies } from "./src/enemies";
 import { Floor } from "./src/floor";
 import { CannonPhysics } from "./src/cannonPhysics";
-
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import dino from "./assets/gltf/dino.glb";
+import bigCactus from "./assets/gltf/bigCactus.glb";
+import littleCactus from "./assets/gltf/littleCactus.glb";
 
 class Jumper {
   constructor() {
@@ -34,21 +35,29 @@ class Jumper {
       [150, 0.5, 30],
       [0, 0, 0]
     );
-
-    this.setLoaderObjects();
+    //glTFの読み込み
+    this.loader = new GLTFLoader();
+    this.setPlayerObjects();
+    this.setEnemiesObjects();
   }
 
   /**
-   * 読み込みが必要なオブジェクト
+   * GLTFLoader
    */
-  setLoaderObjects() {
-    //glTFの読み込み
-    const loader = new GLTFLoader();
-    new Promise((resolve, reject) => {
-      loader.load(dino, (data) => {
+  gltfLoad(url) {
+    return new Promise((resolve) => {
+      this.loader.load(url, (data) => {
         resolve(data);
       });
-    })
+    });
+  }
+
+  /**
+   * プレイヤーを設置
+   */
+  setPlayerObjects() {
+    // プレイヤー
+    this.gltfLoad(dino)
       .then((value) => {
         this.player = new Player(
           this.canvas,
@@ -56,6 +65,20 @@ class Jumper {
           this.cannonPhysics,
           value
         );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  /**
+   * Enemiesを設置
+   */
+  setEnemiesObjects() {
+    Promise.all([this.gltfLoad(bigCactus), this.gltfLoad(littleCactus)])
+      .then((value) => {
+        console.log("emyList", value);
+        this.enemies = new Enemies(this.scene, this.cannonPhysics, value);
       })
       .catch((error) => {
         console.error(error);
@@ -114,8 +137,11 @@ class Jumper {
   animate() {
     this.stats.begin();
 
-    if (this.player) this.cannonPhysics.world.step(1 / 60);
-    if (this.player) this.player.tick();
+    if (this.player && this.enemies) {
+      this.cannonPhysics.world.step(1 / 60);
+      this.player.tick();
+      this.enemies.tick();
+    }
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
 

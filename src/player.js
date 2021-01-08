@@ -24,12 +24,9 @@ export class Player {
       new CANNON.Vec3(args[0] / 2, args[1] / 2, args[2] / 2)
     );
     this.phyBox = new CANNON.Body({ mass, shape });
-    // this.phyBox.angularVelocity.set(0, 5, 10); //角速度
-    // this.phyBox.angularDamping = 0.1; //減衰率
     this.phyBox.fixedRotation = true;
     this.phyBox.position.y = 50;
     cannonPhysics.world.add(this.phyBox);
-    console.log(this.phyBox);
 
     // 物理設定のサイズをボックスで描画
     let cubeGeometry = new THREE.BoxGeometry(args[0], args[1], args[2]);
