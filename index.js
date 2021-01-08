@@ -38,7 +38,7 @@ class Jumper {
     //glTFの読み込み
     this.loader = new GLTFLoader();
     this.setPlayerObjects();
-    this.setEnemiesObjects();
+    this.enemies = new Enemies(this.scene, this.cannonPhysics);
   }
 
   /**
@@ -65,20 +65,6 @@ class Jumper {
           this.cannonPhysics,
           value
         );
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-
-  /**
-   * Enemiesを設置
-   */
-  setEnemiesObjects() {
-    Promise.all([this.gltfLoad(littleCactus), this.gltfLoad(bigCactus)])
-      .then((value) => {
-        console.log("emyList", value);
-        this.enemies = new Enemies(this.scene, this.cannonPhysics, value);
       })
       .catch((error) => {
         console.error(error);

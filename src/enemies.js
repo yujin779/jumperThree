@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import CANNON from "cannon";
-import _ from 'lodash'
 
 import bigCactus from "../assets/gltf/bigCactus.glb";
 import littleCactus from "../assets/gltf/littleCactus.glb";
@@ -11,6 +10,7 @@ const TypesOfEnemies = [
     obj: {
       name: "littleCactus",
       gltfNum: 0,
+      gltf: littleCactus,
       position: { x: -2.6, y: 0, z: 0 },
       rotation: { x: 1.5 },
     },
@@ -22,7 +22,8 @@ const TypesOfEnemies = [
   {
     obj: {
       name: "bigCactus",
-      gltfNum: 0,
+      gltfNum: 1,
+      gltf: bigCactus,
       position: { x: -3.7, y: -0.8, z: -1.7 },
       rotation: { x: 1.5 },
     },
@@ -33,27 +34,13 @@ const TypesOfEnemies = [
   },
 ];
 
-// const createEnemysList = (number, startX, distance) => {
-//   const enemysList = [];
-//   for (let i = 0; i < number; i++) {
-//     let p = startX;
-//     console.log("sttx", p);
-//     if (i !== 0) p = enemysList[i - 1].positionX + distance;
-
-//     enemysList.push({ positionX: p, type: TypesOfEnemies[1] });
-//   }
-//   console.log("enemysList", enemysList);
-//   return enemysList;
-// };
-
 /**
  * サボテン達の位置情報の作成と更新
  */
 export class Enemies {
-  constructor(scene, cannonPhysics, objects) {
+  constructor(scene, cannonPhysics) {
     this.scene = scene;
     this.cannonPhysics = cannonPhysics;
-    this.objects = objects;
     // 作成するオブジェクトの数
     const number = 10;
     // 最初のオブジェクトを作成するx位置
@@ -67,7 +54,6 @@ export class Enemies {
     // 最初の位置データを作成
     this.createEnemiesList(number, startX, this.distance);
 
-    console.log("setModel", objects);
     console.log("eneimiesData", this.eneimiesData);
     // オブジェクトを作成
     this.createEnemiesObj();
@@ -107,8 +93,7 @@ export class Enemies {
       const obj = new Enemy(
         this.scene,
         this.cannonPhysics,
-        this.enemiesData[i],
-        this.objects
+        this.enemiesData[i]
       );
       this.enemiesObj.push(obj);
     }
@@ -119,19 +104,10 @@ export class Enemies {
  * サボテンを描画
  */
 export class Enemy {
-  constructor(scene, cannonPhysics, data, objects) {
-    this.objects = objects;
+  constructor(scene, cannonPhysics, data) {
     this.group = new THREE.Group();
     console.log("ed", data.type.obj.gltf);
-    //物理設定ボックスのサイズ
-    // const args = [1.6, 2.3, 2];
-    console.log("scenep", objects);
-
-    // this.objects[data.type.obj.gltfNum].scene.position.x = data.positionX;
-    this.group.add(this.objects[data.type.obj.gltfNum].scene);
-    // this.load(data.type.obj.gltf);
-
-    // 一旦ロードから
+    this.load(data.type.obj.gltf);
 
     // 物理設定
     var mass = 0;
