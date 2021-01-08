@@ -2,8 +2,13 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stats from "stats.js";
 import { Player } from "./src/player";
+import { Enemies } from "./src/enemies";
 import { Floor } from "./src/floor";
 import { CannonPhysics } from "./src/cannonPhysics";
+
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
+import dino from "./assets/gltf/dino.glb";
 
 class Jumper {
   constructor() {
@@ -12,9 +17,11 @@ class Jumper {
     this.onWindowResize = this.onWindowResize.bind(this);
 
     this.init();
+    // 灯りを設置
     this.defaultLigts();
+    //物理計算
     this.cannonPhysics = new CannonPhysics();
-    this.player = new Player(this.scene, this.cannonPhysics);
+    //床のオブジェクト
     this.floor = new Floor(
       this.scene,
       this.cannonPhysics,
@@ -27,10 +34,37 @@ class Jumper {
       [150, 0.5, 30],
       [0, 0, 0]
     );
-    // クリックしたらダイナソーをジャンプ
-    this.canvas.addEventListener("click", this.player.click);
+
+    this.setLoaderObjects();
   }
 
+  /**
+   * 読み込みが必要なオブジェクト
+   */
+  setLoaderObjects() {
+    //glTFの読み込み
+    const loader = new GLTFLoader();
+    new Promise((resolve, reject) => {
+      loader.load(dino, (data) => {
+        resolve(data);
+      });
+    })
+      .then((value) => {
+        this.player = new Player(
+          this.canvas,
+          this.scene,
+          this.cannonPhysics,
+          value
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  /**
+   * 灯り
+   */
   defaultLigts() {
     const light = new THREE.DirectionalLight(0xffffff, 0.75);
     light.intensity = 1; // 光の強さ
@@ -43,6 +77,9 @@ class Jumper {
     this.scene.add(axis);
   }
 
+  /**
+   * 初期設定
+   */
   init() {
     this.aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 1000);
@@ -71,17 +108,23 @@ class Jumper {
     this.renderer.setAnimationLoop(this.animate);
   }
 
+  /**
+   * フレームごとに実行
+   */
   animate() {
     this.stats.begin();
 
-    this.cannonPhysics.world.step(1 / 60);
-    this.player.tick();
+    if (this.player) this.cannonPhysics.world.step(1 / 60);
+    if (this.player) this.player.tick();
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
 
     this.stats.end();
   }
 
+  /**
+   * ウィンドウサイズ変更時にcanvasサイズ変更
+   */
   onWindowResize() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();

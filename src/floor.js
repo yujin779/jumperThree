@@ -9,7 +9,6 @@ export class Floor {
     this.group = new THREE.Group();
 
     // 物理設定
-    var mass = 1;
     var shape = new CANNON.Box(
       new CANNON.Vec3(size[0] / 2, size[1] / 2, size[2] / 2)
     );

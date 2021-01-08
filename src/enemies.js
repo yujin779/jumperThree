@@ -2,18 +2,47 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import CANNON from "cannon";
 
-import dino from "../assets/gltf/dino.glb";
+import bigCactus from "../assets/gltf/bigCactus.glb";
 
-export class Player {
-  constructor(canvas, scene, cannonPhysics, gltf) {
+export class Enemies {
+  constructor(scene, cannonPhysics) {
+    const loader = new GLTFLoader();
+    let model = null;
+    loader.load(
+      bigCactus,
+      function (gltf) {
+        model = gltf.scene;
+        model.name = "model_with_cloth";
+        model.scale.set(400.0, 400.0, 400.0);
+        model.position.set(0, -400, 0);
+        scene.add(gltf.scene);
+
+        model["test"] = 100;
+        console.log("model");
+      },
+      function (error) {
+        console.log("An error happened");
+        console.log(error);
+      }
+    );
+
+    console.log("setModel", model);
+    // this.tmpObj = new BigCactus(scene, cannonPhysics, this.bigCactus);
+  }
+
+  // load(loader, bigCactus) {
+  //   loader.load(bigCactus, (data) => {
+  //     return data.scene;
+  //   });
+  // }
+}
+
+export class BigCactus {
+  constructor(scene, cannonPhysics, object) {
+    console.log("bigCactusObj", object);
     this.group = new THREE.Group();
     // 着地判定
     this.landing = false;
-    this.canvas = canvas;
-    this.object = gltf.scene;
-    this.object.position.y = -1.1;
-    this.object.position.x = -0.3;
-    this.group.add(this.object);
 
     //物理設定ボックスのサイズ
     const args = [1.6, 2.3, 2];
@@ -41,34 +70,14 @@ export class Player {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     this.group.add(cube);
     scene.add(this.group);
-
-    this.click = () => {
-      // console.log("click", this.landing);
-      // 一度着地していたらクリックでジャンプ
-      if (this.landing) {
-        // console.log("islanding");
-        this.phyBox.applyImpulse(
-          new CANNON.Vec3(0, 20, 0),
-          new CANNON.Vec3(0, 0, 0)
-        );
-        this.landing = false;
-      }
-    };
-    // クリックでジャンプ
-    this.canvas.addEventListener("click", this.click);
-    // 当たり判定
-    this.phyBox.addEventListener("collide", (e) => {
-      // console.log("colliderr", e.contact.bi);
-      if (e.contact.bi.name === "floor") this.landing = true;
-    });
   }
 
   tick() {
     if (this.object === undefined) return;
     // 角度とxポジションを固定
-    this.phyBox.quaternion = new CANNON.Quaternion(0, 0, 0, 1);
-    this.phyBox.position.x = 0;
-    this.phyBox.position.z = 0;
+    // this.phyBox.quaternion = new CANNON.Quaternion(0, 0, 0, 1);
+    // this.phyBox.position.x = 0;
+    // this.phyBox.position.z = 0;
     // this.phyBox.position.x -= 0.01;
     // 物理更新
     this.group.position.copy(this.phyBox.position);
