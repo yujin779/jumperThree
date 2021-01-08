@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import CANNON from "cannon";
+import _ from 'lodash'
 
 import bigCactus from "../assets/gltf/bigCactus.glb";
 import littleCactus from "../assets/gltf/littleCactus.glb";
