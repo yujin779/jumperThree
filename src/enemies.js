@@ -2,23 +2,26 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import CANNON from "cannon";
 
+import bigCactus from "../assets/gltf/bigCactus.glb";
+import littleCactus from "../assets/gltf/littleCactus.glb";
+
 const TypesOfEnemies = [
   {
     obj: {
       name: "littleCactus",
       gltfNum: 0,
-      position: { x: -2.6, y: -0.7, z: 0 },
+      position: { x: -2.6, y: 0, z: 0 },
       rotation: { x: 1.5 },
     },
     colider: {
-      args: [1.4, 1, 1],
-      position: { y: -0.1 },
+      args: [2.8, 5, 1],
+      position: { y: 4 },
     },
   },
   {
     obj: {
       name: "bigCactus",
-      gltfNum: 1,
+      gltfNum: 0,
       position: { x: -3.7, y: -0.8, z: -1.7 },
       rotation: { x: 1.5 },
     },
@@ -49,16 +52,23 @@ export class Enemies {
   constructor(scene, cannonPhysics, objects) {
     this.scene = scene;
     this.cannonPhysics = cannonPhysics;
-
+    this.objects = objects;
+    // 作成するオブジェクトの数
     const number = 10;
+    // 最初のオブジェクトを作成するx位置
     const startX = 0;
-    this.returnX = -5;
+    // このx位置になったら位置を再設定
+    this.returnX = -25;
+    // オブジェクト間の距離
     this.distance = 5;
+    // 移動するスピード
     this.speed = -0.04;
+    // 最初の位置データを作成
     this.createEnemiesList(number, startX, this.distance);
 
     console.log("setModel", objects);
     console.log("eneimiesData", this.eneimiesData);
+    // オブジェクトを作成
     this.createEnemiesObj();
   }
 
@@ -96,7 +106,8 @@ export class Enemies {
       const obj = new Enemy(
         this.scene,
         this.cannonPhysics,
-        this.enemiesData[i]
+        this.enemiesData[i],
+        this.objects
       );
       this.enemiesObj.push(obj);
     }
@@ -107,26 +118,42 @@ export class Enemies {
  * サボテンを描画
  */
 export class Enemy {
-  constructor(scene, cannonPhysics, data) {
+  constructor(scene, cannonPhysics, data, objects) {
+    this.objects = objects;
     this.group = new THREE.Group();
-    console.log("ed", data);
+    console.log("ed", data.type.obj.gltf);
     //物理設定ボックスのサイズ
-    const args = [1.6, 2.3, 2];
+    // const args = [1.6, 2.3, 2];
+    console.log("scenep", objects);
+
+    // this.objects[data.type.obj.gltfNum].scene.position.x = data.positionX;
+    this.group.add(this.objects[data.type.obj.gltfNum].scene);
+    // this.load(data.type.obj.gltf);
+
+    // 一旦ロードから
 
     // 物理設定
     var mass = 0;
     var shape = new CANNON.Box(
-      new CANNON.Vec3(args[0] / 2, args[1] / 2, args[2] / 2)
+      new CANNON.Vec3(
+        data.type.colider.args[0] / 2,
+        data.type.colider.args[1] / 2,
+        data.type.colider.args[2] / 2
+      )
     );
     this.phyBox = new CANNON.Body({ mass, shape });
     this.phyBox.fixedRotation = true;
-    // this.phyBox.position.y = 50;
+    this.phyBox.position.y = 5;
     this.phyBox.position.x = data.positionX;
     cannonPhysics.world.add(this.phyBox);
-    console.log(this.phyBox);
+    // console.log(this.phyBox);
 
     // 物理設定のサイズをボックスで描画
-    let cubeGeometry = new THREE.BoxGeometry(args[0], args[1], args[2]);
+    let cubeGeometry = new THREE.BoxGeometry(
+      data.type.colider.args[0],
+      data.type.colider.args[1],
+      data.type.colider.args[2]
+    );
     let cubeMaterial = new THREE.MeshStandardMaterial({
       color: "blue",
       transparent: true,
@@ -148,5 +175,28 @@ export class Enemy {
     // this.phyBox.position.x -= 0.01;
     // 物理更新
     this.group.position.copy(this.phyBox.position);
+  }
+
+  load(url) {
+    // プレイヤー
+    this.gltfLoad(url)
+      .then((value) => {
+        this.group.add(value.scene);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  /**
+   * GLTFLoader
+   */
+  gltfLoad(url) {
+    return new Promise((resolve) => {
+      const loader = new GLTFLoader();
+      loader.load(url, (data) => {
+        resolve(data);
+      });
+    });
   }
 }

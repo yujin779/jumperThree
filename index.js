@@ -23,12 +23,12 @@ class Jumper {
     //物理計算
     this.cannonPhysics = new CannonPhysics();
     //床のオブジェクト
-    this.floor = new Floor(
-      this.scene,
-      this.cannonPhysics,
-      [10, 0.5, 10],
-      [0, 10, 0]
-    );
+    // this.floor = new Floor(
+    //   this.scene,
+    //   this.cannonPhysics,
+    //   [10, 0.5, 10],
+    //   [0, 10, 0]
+    // );
     this.floor2 = new Floor(
       this.scene,
       this.cannonPhysics,
@@ -75,7 +75,7 @@ class Jumper {
    * Enemiesを設置
    */
   setEnemiesObjects() {
-    Promise.all([this.gltfLoad(bigCactus), this.gltfLoad(littleCactus)])
+    Promise.all([this.gltfLoad(littleCactus), this.gltfLoad(bigCactus)])
       .then((value) => {
         console.log("emyList", value);
         this.enemies = new Enemies(this.scene, this.cannonPhysics, value);
