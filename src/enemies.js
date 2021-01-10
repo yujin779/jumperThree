@@ -11,12 +11,12 @@ const TypesOfEnemies = [
       name: "littleCactus",
       gltfNum: 0,
       gltf: littleCactus,
-      position: { x: -2.6, y: 0, z: 0 },
+      position: { x: -2.75, y: 0.4, z: -0.2 },
       rotation: { x: 1.5 },
     },
     colider: {
-      args: [2.8, 5, 1],
-      position: { y: 4 },
+      args: [1.2, 3, 1],
+      // position: { y: 4 },
     },
   },
   {
@@ -24,12 +24,12 @@ const TypesOfEnemies = [
       name: "bigCactus",
       gltfNum: 1,
       gltf: bigCactus,
-      position: { x: -3.7, y: -0.8, z: -1.7 },
+      position: { x: -3.9, y: 0.4, z: -1.7 },
       rotation: { x: 1.5 },
     },
     colider: {
-      args: [1, 2.3, 1],
-      position: { y: 0.6 },
+      args: [0.6, 5.5, 1],
+      // position: { y: 0.6 },
     },
   },
 ];
@@ -44,17 +44,16 @@ export class Enemies {
     // 作成するオブジェクトの数
     const number = 10;
     // 最初のオブジェクトを作成するx位置
-    const startX = 0;
+    const startX = 30;
     // このx位置になったら位置を再設定
     this.returnX = -25;
     // オブジェクト間の距離
-    this.distance = 5;
+    this.distance = 15;
     // 移動するスピード
-    this.speed = -0.04;
+    // this.speed = -0.04;
     // 最初の位置データを作成
     this.createEnemiesList(number, startX, this.distance);
 
-    console.log("eneimiesData", this.eneimiesData);
     // オブジェクトを作成
     this.createEnemiesObj();
   }
@@ -63,17 +62,19 @@ export class Enemies {
     this.enemiesData = [];
     for (let i = 0; i < number; i++) {
       let p = startX;
-      console.log("sttx", p);
       if (i !== 0) p = this.enemiesData[i - 1].positionX + distance;
 
-      this.enemiesData.push({ positionX: p, type: TypesOfEnemies[1] });
+      this.enemiesData.push({
+        positionX: p,
+        type: TypesOfEnemies[Math.floor(Math.random() * TypesOfEnemies.length)],
+        // type: TypesOfEnemies[1],
+      });
     }
-    console.log("enemysList", this.enemiesData);
   }
 
-  tick() {
+  tick(speed) {
     for (let i = 0; i < this.enemiesData.length; i++) {
-      this.enemiesData[i].positionX += this.speed;
+      this.enemiesData[i].positionX -= speed;
       // returnXの位置まで来たらポジションを移動
       if (this.enemiesData[i].positionX < this.returnX) {
         this.enemiesData[i].positionX =
@@ -105,8 +106,8 @@ export class Enemies {
  */
 export class Enemy {
   constructor(scene, cannonPhysics, data) {
+    this.data = data;
     this.group = new THREE.Group();
-    console.log("ed", data.type.obj.gltf);
     this.load(data.type.obj.gltf);
 
     // 物理設定
@@ -120,10 +121,10 @@ export class Enemy {
     );
     this.phyBox = new CANNON.Body({ mass, shape });
     this.phyBox.fixedRotation = true;
-    this.phyBox.position.y = 5;
+    this.phyBox.name = "enemy";
+    // this.phyBox.position.y = 5;
     this.phyBox.position.x = data.positionX;
     cannonPhysics.world.add(this.phyBox);
-    // console.log(this.phyBox);
 
     // 物理設定のサイズをボックスで描画
     let cubeGeometry = new THREE.BoxGeometry(
@@ -136,20 +137,14 @@ export class Enemy {
       transparent: true,
       opacity: 0.3,
     });
-    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     this.group.add(cube);
     scene.add(this.group);
     this.group.position.copy(this.phyBox.position);
   }
 
   tick(x) {
-    // if (this.object === undefined) return;
     this.phyBox.position.x = x;
-    // 角度とxポジションを固定
-    // this.phyBox.quaternion = new CANNON.Quaternion(0, 0, 0, 1);
-    // this.phyBox.position.x = 0;
-    // this.phyBox.position.z = 0;
-    // this.phyBox.position.x -= 0.01;
     // 物理更新
     this.group.position.copy(this.phyBox.position);
   }
@@ -158,6 +153,7 @@ export class Enemy {
     // プレイヤー
     this.gltfLoad(url)
       .then((value) => {
+        value.scene.position.copy(this.data.type.obj.position);
         this.group.add(value.scene);
       })
       .catch((error) => {

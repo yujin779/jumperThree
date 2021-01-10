@@ -8,8 +8,6 @@ import { CannonPhysics } from "./src/cannonPhysics";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import dino from "./assets/gltf/dino.glb";
-import bigCactus from "./assets/gltf/bigCactus.glb";
-import littleCactus from "./assets/gltf/littleCactus.glb";
 
 class Jumper {
   constructor() {
@@ -92,9 +90,11 @@ class Jumper {
   init() {
     this.aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 1000);
-    this.camera.position.z = 40;
+    // this.camera.position.z = 40;
+    this.camera.position.set(-15, 10, 30);
+    this.camera.lookAt(new THREE.Vector3(10, 0, 0));
 
-    this.controls = new OrbitControls(this.camera);
+    // this.controls = new OrbitControls(this.camera);
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("#191919");
@@ -126,9 +126,9 @@ class Jumper {
     if (this.player && this.enemies) {
       this.cannonPhysics.world.step(1 / 60);
       this.player.tick();
-      this.enemies.tick();
+      this.enemies.tick(0.07);
     }
-    this.controls.update();
+    // this.controls.update();
     this.renderer.render(this.scene, this.camera);
 
     this.stats.end();

@@ -25,7 +25,7 @@ export class Player {
     );
     this.phyBox = new CANNON.Body({ mass, shape });
     this.phyBox.fixedRotation = true;
-    this.phyBox.position.y = 50;
+    this.phyBox.position.y = 30;
     cannonPhysics.world.add(this.phyBox);
 
     // 物理設定のサイズをボックスで描画
@@ -45,7 +45,7 @@ export class Player {
       if (this.landing) {
         // console.log("islanding");
         this.phyBox.applyImpulse(
-          new CANNON.Vec3(0, 20, 0),
+          new CANNON.Vec3(0, 25, 0),
           new CANNON.Vec3(0, 0, 0)
         );
         this.landing = false;
@@ -57,6 +57,7 @@ export class Player {
     this.phyBox.addEventListener("collide", (e) => {
       // console.log("colliderr", e.contact.bi);
       if (e.contact.bi.name === "floor") this.landing = true;
+      if (e.contact.bi.name === "enemy") console.log("enemy");
     });
   }
 
