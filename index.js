@@ -104,7 +104,8 @@ class Jumper {
     this.aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 1000);
     // this.camera.position.z = 40;
-    this.camera.position.set(-15, 10, 30);
+    // this.camera.position.set(-15, 10, 30);
+    this.camera.position.set(-15, 60, 60);
     this.camera.lookAt(new THREE.Vector3(10, 0, 0));
 
     // this.controls = new OrbitControls(this.camera);
