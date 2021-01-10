@@ -12,7 +12,7 @@
     "lodash": "4.17.20",
     "pixi.js": "5.3.7",
     "stats.js": "0.17.0",
-    "three": "0.106.2"
+    "three": "0.124.0"
   },
   "devDependencies": {
     "@types/stats.js": "0.17.0",
