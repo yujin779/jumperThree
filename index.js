@@ -6,14 +6,24 @@ import { Enemies } from "./src/enemies";
 import { Floor } from "./src/floor";
 import { CannonPhysics } from "./src/cannonPhysics";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Opening } from "./src/opening";
 
 import dino from "./assets/gltf/dino.glb";
+
+const Scene = {
+  Opening: 0,
+  Playing: 1,
+  GameOver: 2,
+};
 
 class Jumper {
   constructor() {
     this.init = this.init.bind(this);
     this.animate = this.animate.bind(this);
     this.onWindowResize = this.onWindowResize.bind(this);
+    this.gameScene = Scene.Opening;
+    console.log("scene", this.scene);
+    console.log("s", Scene.Opening);
 
     this.init();
     // 灯りを設置
@@ -27,7 +37,7 @@ class Jumper {
     //   [10, 0.5, 10],
     //   [0, 10, 0]
     // );
-    this.floor2 = new Floor(
+    this.floor = new Floor(
       this.scene,
       this.cannonPhysics,
       [150, 0.5, 30],
@@ -37,6 +47,9 @@ class Jumper {
     this.loader = new GLTFLoader();
     this.setPlayerObjects();
     this.enemies = new Enemies(this.scene, this.cannonPhysics);
+
+    //Opening
+    this.opening = new Opening(this.scene, this.camera, this.cannonPhysics);
   }
 
   /**
@@ -123,11 +136,30 @@ class Jumper {
   animate() {
     this.stats.begin();
 
-    if (this.player && this.enemies) {
-      this.cannonPhysics.world.step(1 / 60);
-      this.player.tick();
-      this.enemies.tick(0.07);
+    switch (this.gameScene) {
+      case 0:
+        // console.log("opning");
+        break;
+      case Scene.Playing:
+        console.log("playing");
+        // if (this.player && this.enemies) {
+        //   this.cannonPhysics.world.step(1 / 60);
+        //   this.player.tick();
+        //   this.enemies.tick(0.07);
+        // }
+        break;
+      case Scene.GameOver:
+        console.log("gameover");
+        break;
+      default:
+        console.log("scene is default");
     }
+
+    // if (this.player && this.enemies) {
+    //   this.cannonPhysics.world.step(1 / 60);
+    //   this.player.tick();
+    //   this.enemies.tick(0.07);
+    // }
     // this.controls.update();
     this.renderer.render(this.scene, this.camera);
 

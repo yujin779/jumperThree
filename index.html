@@ -27,10 +27,30 @@
         background: red;
         border: none;
       }
+      #score {
+        position: absolute;
+        top: -4%;
+        right: 5%;
+        font-family: "arial black";
+        font-size: 3vw;
+        color: #fff;
+      }
+      #mainText {
+        position: absolute;
+        top: 40%;
+        right: 40%;
+        /* text-align: center; */
+
+        font-family: "arial black";
+        font-size: 3vw;
+        color: #fff;
+      }
     </style>
   </head>
   <body>
     <canvas id="app"></canvas>
+    <p id="score">score 0</p>
+    <p id="mainText">ダイナソージャンパー<br />click to start...</p>
     <script src="./index.js"></script>
   </body>
 </html>
