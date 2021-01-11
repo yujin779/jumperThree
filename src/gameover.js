@@ -1,15 +1,16 @@
 import * as THREE from "three";
 import { VOXLoader } from "three/examples/jsm/loaders/VOXLoader";
-import titleVox from "../assets/vox/op.vox";
+import titleVox from "../assets/vox/gameover.vox";
 
 /**
- * 一番最初のシーン
+ * gameoverシーン
  */
-export class Opening {
+export class GameOver {
   constructor(scene, camera) {
     this.group = new THREE.Group();
     // groupをカメラの正面に向ける
     this.group.quaternion.copy(camera.quaternion);
+    this.scene = scene;
 
     // リストを作成
     this.voxGroup = new THREE.Group();
@@ -19,6 +20,7 @@ export class Opening {
     const quaternion = new THREE.Quaternion();
     quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
 
+    const vector = new THREE.Vector3(1, 0, 0);
     this.voxGroup.applyQuaternion(quaternion);
     this.voxGroup.position.z = 20;
     this.group.add(this.voxGroup);
@@ -33,8 +35,11 @@ export class Opening {
     this.background = new THREE.Mesh(cubeGeometry, cubeMaterial);
     this.background.position.set(7.5, 2, 15);
     this.group.add(this.background);
-    scene.add(this.group);
     this.toTheNextScene = false;
+  }
+
+  sceneAdd() {
+    this.scene.add(this.group);
   }
 
   tick() {

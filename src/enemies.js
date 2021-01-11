@@ -16,7 +16,6 @@ const TypesOfEnemies = [
     },
     colider: {
       args: [1.2, 3, 1],
-      // position: { y: 4 },
     },
   },
   {
@@ -29,7 +28,6 @@ const TypesOfEnemies = [
     },
     colider: {
       args: [0.6, 5.5, 1],
-      // position: { y: 0.6 },
     },
   },
 ];
@@ -48,9 +46,8 @@ export class Enemies {
     // このx位置になったら位置を再設定
     this.returnX = -25;
     // オブジェクト間の距離
-    this.distance = 15;
-    // 移動するスピード
-    // this.speed = -0.04;
+    this.distance = 20;
+    this.addMaxDistance = 30;
     // 最初の位置データを作成
     this.createEnemiesList(number, startX, this.distance);
 
@@ -67,7 +64,6 @@ export class Enemies {
       this.enemiesData.push({
         positionX: p,
         type: TypesOfEnemies[Math.floor(Math.random() * TypesOfEnemies.length)],
-        // type: TypesOfEnemies[1],
       });
     }
   }
@@ -81,7 +77,9 @@ export class Enemies {
           Math.max.apply(
             null,
             this.enemiesData.map((o) => o.positionX)
-          ) + this.distance;
+          ) +
+          this.distance +
+          Math.random() * this.addMaxDistance;
       }
       // オブジェクトを移動
       this.enemiesObj[i].tick(this.enemiesData[i].positionX);

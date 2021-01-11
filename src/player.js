@@ -1,8 +1,5 @@
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import CANNON from "cannon";
-
-import dino from "../assets/gltf/dino.glb";
 
 export class Player {
   constructor(canvas, scene, cannonPhysics, gltf) {
@@ -25,7 +22,7 @@ export class Player {
     );
     this.phyBox = new CANNON.Body({ mass, shape });
     this.phyBox.fixedRotation = true;
-    this.phyBox.position.y = 30;
+    this.phyBox.position.y = 10;
     cannonPhysics.world.add(this.phyBox);
 
     // 物理設定のサイズをボックスで描画
@@ -38,12 +35,12 @@ export class Player {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     this.group.add(cube);
     scene.add(this.group);
+    this.toTheNextScene = false;
 
     // 当たり判定
     this.phyBox.addEventListener("collide", (e) => {
-      // console.log("colliderr", e.contact.bi);
       if (e.contact.bi.name === "floor") this.landing = true;
-      if (e.contact.bi.name === "enemy") console.log("enemy");
+      if (e.contact.bi.name === "enemy") this.toTheNextScene = true;
     });
   }
 
@@ -53,7 +50,6 @@ export class Player {
     this.phyBox.quaternion = new CANNON.Quaternion(0, 0, 0, 1);
     this.phyBox.position.x = 0;
     this.phyBox.position.z = 0;
-    // this.phyBox.position.x -= 0.01;
     // 物理更新
     this.group.position.copy(this.phyBox.position);
     this.group.quaternion.copy(this.phyBox.quaternion);

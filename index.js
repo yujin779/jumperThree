@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import CANNON from "cannon";
 import Stats from "stats.js";
 import { Player } from "./src/player";
 import { Enemies } from "./src/enemies";
@@ -7,6 +8,7 @@ import { Floor } from "./src/floor";
 import { CannonPhysics } from "./src/cannonPhysics";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Opening } from "./src/opening";
+import { GameOver } from "./src/gameover";
 
 import dino from "./assets/gltf/dino.glb";
 
@@ -22,21 +24,18 @@ class Jumper {
     this.animate = this.animate.bind(this);
     this.onWindowResize = this.onWindowResize.bind(this);
     this.gameScene = SCENE.Opening;
-    console.log("scene", this.scene);
-    console.log("s", SCENE.Opening);
 
     this.init();
+    this.score = 0;
+    this.scoreText = document.getElementById("score");
+    this.count = 0;
+    this.runningSpeed = 0.07;
+
     // 灯りを設置
     this.defaultLigts();
     //物理計算
     this.cannonPhysics = new CannonPhysics();
     //床のオブジェクト
-    // this.floor = new Floor(
-    //   this.scene,
-    //   this.cannonPhysics,
-    //   [10, 0.5, 10],
-    //   [0, 10, 0]
-    // );
     this.floor = new Floor(
       this.scene,
       this.cannonPhysics,
@@ -48,19 +47,20 @@ class Jumper {
     this.setPlayerObjects();
     this.enemies = new Enemies(this.scene, this.cannonPhysics);
 
-    //Opening
+    //Openingシーン
     this.opening = new Opening(this.scene, this.camera);
+    //Gameoverシーン
+    this.gameOver = new GameOver(this.scene, this.camera);
+
+    // クリック挙動設定
     this.click = () => {
       switch (this.gameScene) {
         case SCENE.Opening:
-          console.log("opningClick");
           this.opening.toTheNextScene = true;
           this.opening.background.material.opacity = 0;
           break;
         case SCENE.Playing:
-          console.log("playingClick");
           if (this.player.landing) {
-            // console.log("islanding");
             this.player.phyBox.applyImpulse(
               new CANNON.Vec3(0, 25, 0),
               new CANNON.Vec3(0, 0, 0)
@@ -70,14 +70,13 @@ class Jumper {
           break;
         case SCENE.GameOver:
           console.log("gameover");
+
           break;
         default:
           console.log("scene is default");
       }
-      // console.log("click", this.landing);
-      // 一度着地していたらクリックでジャンプ
     };
-    // クリックでジャンプ
+    // クリック
     this.canvas.addEventListener("click", this.click);
   }
 
@@ -132,9 +131,8 @@ class Jumper {
   init() {
     this.aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 1000);
-    // this.camera.position.z = 40;
-    // this.camera.position.set(-15, 10, 30);
-    this.camera.position.set(-15, 60, 60);
+    this.camera.position.set(-15, 10, 30);
+    // this.camera.position.set(-15, 60, 60);
     this.camera.lookAt(new THREE.Vector3(10, 0, 0));
 
     // this.controls = new OrbitControls(this.camera);
@@ -165,39 +163,37 @@ class Jumper {
    */
   animate() {
     this.stats.begin();
-    // this.opening.tick();
 
     switch (this.gameScene) {
       case SCENE.Opening:
         this.opening.tick();
-        // console.log(this.opening.mesh);
         if (this.opening.mesh === null) break;
-        // console.log("b");
         if (this.opening.mesh.material.opacity < 0.05) {
-          // console.log("a");
+          this.opening.mesh.material.opacity = 0;
           this.gameScene = SCENE.Playing;
+          this.opening = null;
         }
         break;
       case SCENE.Playing:
-        // console.log("playing");
         if (this.player && this.enemies) {
           this.cannonPhysics.world.step(1 / 60);
+          this.count++;
+          if (this.count % 300 == 0) this.runningSpeed += 0.01;
           this.player.tick();
-          this.enemies.tick(0.07);
+          this.score += this.runningSpeed;
+          this.scoreText.innerHTML = "SCORE " + Math.floor(this.score);
+          this.enemies.tick(this.runningSpeed);
+          if (this.player.toTheNextScene) {
+            this.gameScene = SCENE.GameOver;
+            this.gameOver.sceneAdd();
+          }
         }
         break;
       case SCENE.GameOver:
-        console.log("gameover");
         break;
       default:
-        console.log("scene is default");
     }
 
-    // if (this.player && this.enemies) {
-    //   this.cannonPhysics.world.step(1 / 60);
-    //   this.player.tick();
-    //   this.enemies.tick(0.07);
-    // }
     // this.controls.update();
     this.renderer.render(this.scene, this.camera);
 
