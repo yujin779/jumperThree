@@ -39,20 +39,6 @@ export class Player {
     this.group.add(cube);
     scene.add(this.group);
 
-    this.click = () => {
-      // console.log("click", this.landing);
-      // 一度着地していたらクリックでジャンプ
-      if (this.landing) {
-        // console.log("islanding");
-        this.phyBox.applyImpulse(
-          new CANNON.Vec3(0, 25, 0),
-          new CANNON.Vec3(0, 0, 0)
-        );
-        this.landing = false;
-      }
-    };
-    // クリックでジャンプ
-    this.canvas.addEventListener("click", this.click);
     // 当たり判定
     this.phyBox.addEventListener("collide", (e) => {
       // console.log("colliderr", e.contact.bi);

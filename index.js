@@ -10,7 +10,7 @@ import { Opening } from "./src/opening";
 
 import dino from "./assets/gltf/dino.glb";
 
-const Scene = {
+export const SCENE = {
   Opening: 0,
   Playing: 1,
   GameOver: 2,
@@ -21,9 +21,9 @@ class Jumper {
     this.init = this.init.bind(this);
     this.animate = this.animate.bind(this);
     this.onWindowResize = this.onWindowResize.bind(this);
-    this.gameScene = Scene.Opening;
+    this.gameScene = SCENE.Opening;
     console.log("scene", this.scene);
-    console.log("s", Scene.Opening);
+    console.log("s", SCENE.Opening);
 
     this.init();
     // 灯りを設置
@@ -49,7 +49,36 @@ class Jumper {
     this.enemies = new Enemies(this.scene, this.cannonPhysics);
 
     //Opening
-    this.opening = new Opening(this.scene, this.camera, this.cannonPhysics);
+    this.opening = new Opening(this.scene, this.camera);
+    this.click = () => {
+      switch (this.gameScene) {
+        case SCENE.Opening:
+          console.log("opningClick");
+          this.opening.toTheNextScene = true;
+          this.opening.background.material.opacity = 0;
+          break;
+        case SCENE.Playing:
+          console.log("playingClick");
+          if (this.player.landing) {
+            // console.log("islanding");
+            this.player.phyBox.applyImpulse(
+              new CANNON.Vec3(0, 25, 0),
+              new CANNON.Vec3(0, 0, 0)
+            );
+            this.player.landing = false;
+          }
+          break;
+        case SCENE.GameOver:
+          console.log("gameover");
+          break;
+        default:
+          console.log("scene is default");
+      }
+      // console.log("click", this.landing);
+      // 一度着地していたらクリックでジャンプ
+    };
+    // クリックでジャンプ
+    this.canvas.addEventListener("click", this.click);
   }
 
   /**
@@ -136,20 +165,28 @@ class Jumper {
    */
   animate() {
     this.stats.begin();
+    // this.opening.tick();
 
     switch (this.gameScene) {
-      case 0:
-        // console.log("opning");
+      case SCENE.Opening:
+        this.opening.tick();
+        // console.log(this.opening.mesh);
+        if (this.opening.mesh === null) break;
+        // console.log("b");
+        if (this.opening.mesh.material.opacity < 0.05) {
+          // console.log("a");
+          this.gameScene = SCENE.Playing;
+        }
         break;
-      case Scene.Playing:
-        console.log("playing");
-        // if (this.player && this.enemies) {
-        //   this.cannonPhysics.world.step(1 / 60);
-        //   this.player.tick();
-        //   this.enemies.tick(0.07);
-        // }
+      case SCENE.Playing:
+        // console.log("playing");
+        if (this.player && this.enemies) {
+          this.cannonPhysics.world.step(1 / 60);
+          this.player.tick();
+          this.enemies.tick(0.07);
+        }
         break;
-      case Scene.GameOver:
+      case SCENE.GameOver:
         console.log("gameover");
         break;
       default:

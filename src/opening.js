@@ -1,13 +1,12 @@
 import * as THREE from "three";
-import CANNON from "cannon";
 import { VOXLoader } from "three/examples/jsm/loaders/VOXLoader";
 import titleVox from "../assets/vox/op.vox";
 
 /**
- * 床
+ * 一番最初のシーン
  */
 export class Opening {
-  constructor(scene, camera, cannonPhysics) {
+  constructor(scene, camera) {
     console.log("camera is", camera);
     this.group = new THREE.Group();
     console.log("group is", this.group.quaternion);
@@ -35,17 +34,42 @@ export class Opening {
       transparent: true,
       opacity: 0.7,
     });
-    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    this.background = new THREE.Mesh(cubeGeometry, cubeMaterial);
     // cube.position.x = 7.5;
     // cube.position.z = 13;
-    cube.position.set(7.5, 2, 15);
+    this.background.position.set(7.5, 2, 15);
     // cube.position.set(position[0], position[1], position[2]);
-    this.group.add(cube);
+    this.group.add(this.background);
     scene.add(this.group);
+    console.log("group", this.background);
+    this.toTheNextScene = false;
+  }
+
+  tick() {
+    if (this.toTheNextScene) this.nextScene();
+  }
+
+  nextScene() {
+    for (var i = 0; i < this.diractionList.length; i++) {
+      const speed = 0.8;
+      this.diractionList[i].px += this.diractionList[i].dx * speed;
+      this.diractionList[i].py += this.diractionList[i].dy * speed;
+      this.diractionList[i].pz += this.diractionList[i].dz * speed;
+      this.dummy.position.set(
+        this.diractionList[i].px,
+        this.diractionList[i].py,
+        this.diractionList[i].pz
+      );
+      this.dummy.updateMatrix();
+      this.mesh.setMatrixAt(i, this.dummy.matrix);
+      this.mesh.instanceMatrix.needsUpdate = true;
+      this.mesh.material.opacity *= 0.99995;
+    }
   }
 
   voxLoad(url) {
-    let mesh = null;
+    this.diractionList = [];
+    this.mesh = null;
     this.dummy = new THREE.Object3D();
 
     // ローダーを作成
@@ -56,7 +80,7 @@ export class Opening {
     loader.load(url, (chunks) => {
       console.log("  chunks.length", chunks[0].data.length);
 
-      mesh = new THREE.InstancedMesh(
+      this.mesh = new THREE.InstancedMesh(
         new THREE.BoxBufferGeometry(scale, scale, scale),
         new THREE.MeshStandardMaterial({
           //color: color.setRGB(r, g, b),
@@ -64,7 +88,7 @@ export class Opening {
         }),
         chunks[0].data.length / 4
       );
-      this.voxGroup.add(mesh);
+      this.voxGroup.add(this.mesh);
       for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
         const size = chunk.size;
@@ -81,11 +105,20 @@ export class Opening {
           const z = data[j + 2] - size.z / 2;
           this.dummy.position.set(x * scale, z * scale, -y * scale);
           this.dummy.updateMatrix();
-          mesh.setMatrixAt(di++, this.dummy.matrix);
+          this.mesh.setMatrixAt(di++, this.dummy.matrix);
+          this.diractionList.push({
+            px: x * scale,
+            dx: Math.random() - 0.5,
+            py: z * scale,
+            dy: Math.random() - 0.5,
+            pz: -y * scale,
+            dz: Math.random() - 0.5,
+          });
         }
-        mesh.instanceMatrix.needsUpdate = true;
-        console.log("mesh", mesh);
+        this.mesh.instanceMatrix.needsUpdate = true;
+        console.log("mesh", this.mesh.material.opacity);
       }
+      console.log("direct0", this.diractionList.length);
     });
   }
 }
