@@ -27,12 +27,9 @@ class Jumper {
 
     this.init();
     this.scoreText = document.getElementById("score");
-<<<<<<< HEAD
-=======
+    this.score = 0;
     this.count = 0;
-    this.runningSpeed = 0.1;
->>>>>>> 844ba2e2920959266306aec4813708b02a537f0c
-
+    this.runningSpeed = 0.15;
     // 灯りを設置
     this.defaultLigts();
     //物理計算
