@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import CANNON from "cannon";
 import Stats from "stats.js";
 import { Player } from "./src/player";
@@ -27,6 +27,11 @@ class Jumper {
 
     this.init();
     this.scoreText = document.getElementById("score");
+<<<<<<< HEAD
+=======
+    this.count = 0;
+    this.runningSpeed = 0.1;
+>>>>>>> 844ba2e2920959266306aec4813708b02a537f0c
 
     // 灯りを設置
     this.defaultLigts();
@@ -190,7 +195,7 @@ class Jumper {
         if (this.player && this.enemies) {
           this.cannonPhysics.world.step(1 / 60);
           this.count++;
-          if (this.count % 300 == 0) this.runningSpeed += 0.01;
+          if (this.count % 300 === 0) this.runningSpeed += 0.01;
           this.player.tick();
           this.score += this.runningSpeed;
           this.scoreText.innerHTML = "SCORE " + Math.floor(this.score);
