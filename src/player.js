@@ -22,7 +22,7 @@ export class Player {
     );
     this.phyBox = new CANNON.Body({ mass, shape });
     this.phyBox.fixedRotation = true;
-    this.phyBox.position.y = 10;
+    this.initPosition();
     cannonPhysics.world.add(this.phyBox);
 
     // 物理設定のサイズをボックスで描画
@@ -31,6 +31,8 @@ export class Player {
       color: "green",
       transparent: true,
       opacity: 0.3,
+      // コライダーを非表示
+      visible: false,
     });
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     this.group.add(cube);
@@ -39,9 +41,15 @@ export class Player {
 
     // 当たり判定
     this.phyBox.addEventListener("collide", (e) => {
+      // console.log(e.contact);
       if (e.contact.bi.name === "floor") this.landing = true;
-      if (e.contact.bi.name === "enemy") this.toTheNextScene = true;
+      if (e.contact.bi.name === "enemy" || e.contact.bj.name === "enemy")
+        this.toTheNextScene = true;
     });
+  }
+
+  initPosition() {
+    this.phyBox.position.y = 10;
   }
 
   tick() {

@@ -42,6 +42,10 @@ export class GameOver {
     this.scene.add(this.group);
   }
 
+  sceneRemove() {
+    this.scene.remove(this.group);
+  }
+
   tick() {
     if (this.toTheNextScene) this.nextScene();
   }

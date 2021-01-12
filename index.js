@@ -26,10 +26,7 @@ class Jumper {
     this.gameScene = SCENE.Opening;
 
     this.init();
-    this.score = 0;
     this.scoreText = document.getElementById("score");
-    this.count = 0;
-    this.runningSpeed = 0.07;
 
     // 灯りを設置
     this.defaultLigts();
@@ -44,13 +41,16 @@ class Jumper {
     );
     //glTFの読み込み
     this.loader = new GLTFLoader();
-    this.setPlayerObjects();
-    this.enemies = new Enemies(this.scene, this.cannonPhysics);
-
     //Openingシーン
     this.opening = new Opening(this.scene, this.camera);
     //Gameoverシーン
     this.gameOver = new GameOver(this.scene, this.camera);
+    this.setPlayerObjects();
+    this.enemies = new Enemies(this.scene, this.cannonPhysics);
+    this.score = 0;
+    this.scoreText = document.getElementById("score");
+    this.count = 0;
+    this.runningSpeed = 0.15;
 
     // クリック挙動設定
     this.click = () => {
@@ -69,8 +69,11 @@ class Jumper {
           }
           break;
         case SCENE.GameOver:
-          console.log("gameover");
-
+          // console.log("gameover");
+          this.resetData();
+          this.player.toTheNextScene = false;
+          this.gameOver.sceneRemove();
+          this.gameScene = SCENE.Playing;
           break;
         default:
           console.log("scene is default");
@@ -78,6 +81,14 @@ class Jumper {
     };
     // クリック
     this.canvas.addEventListener("click", this.click);
+  }
+
+  resetData() {
+    this.score = 0;
+    this.count = 0;
+    this.runningSpeed = 0.15;
+    this.player.initPosition();
+    this.enemies.reset();
   }
 
   /**
@@ -131,7 +142,7 @@ class Jumper {
   init() {
     this.aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 1000);
-    this.camera.position.set(-15, 10, 30);
+    this.camera.position.set(-15, 12, 30);
     // this.camera.position.set(-15, 60, 60);
     this.camera.lookAt(new THREE.Vector3(10, 0, 0));
 
@@ -175,6 +186,7 @@ class Jumper {
         }
         break;
       case SCENE.Playing:
+        // console.log("playingnext", this.player.toTheNextScene);
         if (this.player && this.enemies) {
           this.cannonPhysics.world.step(1 / 60);
           this.count++;
@@ -188,6 +200,7 @@ class Jumper {
             this.gameOver.sceneAdd();
           }
         }
+
         break;
       case SCENE.GameOver:
         break;

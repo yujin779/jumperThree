@@ -38,18 +38,35 @@ const TypesOfEnemies = [
 export class Enemies {
   constructor(scene, cannonPhysics) {
     this.scene = scene;
+    this.group = new THREE.Group();
     this.cannonPhysics = cannonPhysics;
     // 作成するオブジェクトの数
-    const number = 10;
+    this.number = 40;
     // 最初のオブジェクトを作成するx位置
-    const startX = 30;
+    this.startX = 30;
     // このx位置になったら位置を再設定
     this.returnX = -25;
     // オブジェクト間の距離
     this.distance = 20;
     this.addMaxDistance = 30;
     // 最初の位置データを作成
-    this.createEnemiesList(number, startX, this.distance);
+    this.createEnemiesList(this.number, this.startX, this.distance);
+
+    // オブジェクトを作成
+    this.createEnemiesObj();
+    scene.add(this.group);
+  }
+
+  reset() {
+    // コライダーを削除
+    for (var i = this.enemiesObj.length - 1; i >= 0; i--) {
+      const obj = this.enemiesObj[i];
+      this.cannonPhysics.world.removeBody(obj.phyBox);
+    }
+    // オブジェクトを削除
+    this.group.remove.apply(this.group, this.group.children);
+    // 最初の位置データを作成
+    this.createEnemiesList(this.number, this.startX, this.distance);
 
     // オブジェクトを作成
     this.createEnemiesObj();
@@ -92,7 +109,8 @@ export class Enemies {
       const obj = new Enemy(
         this.scene,
         this.cannonPhysics,
-        this.enemiesData[i]
+        this.enemiesData[i],
+        this.group
       );
       this.enemiesObj.push(obj);
     }
@@ -103,7 +121,7 @@ export class Enemies {
  * サボテンを描画
  */
 export class Enemy {
-  constructor(scene, cannonPhysics, data) {
+  constructor(scene, cannonPhysics, data, group) {
     this.data = data;
     this.group = new THREE.Group();
     this.load(data.type.obj.gltf);
@@ -134,10 +152,12 @@ export class Enemy {
       color: "blue",
       transparent: true,
       opacity: 0.3,
+      // コライダーを非表示
+      visible: false,
     });
     const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     this.group.add(cube);
-    scene.add(this.group);
+    group.add(this.group);
     this.group.position.copy(this.phyBox.position);
   }
 
