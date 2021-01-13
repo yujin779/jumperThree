@@ -49,7 +49,9 @@ export class Player {
   }
 
   initPosition() {
-    this.phyBox.position.y = 10;
+    this.phyBox.position.y = 1.5;
+    this.group.position.copy(this.phyBox.position);
+    this.group.quaternion.copy(this.phyBox.quaternion);
   }
 
   tick() {
@@ -58,6 +60,7 @@ export class Player {
     this.phyBox.quaternion = new CANNON.Quaternion(0, 0, 0, 1);
     this.phyBox.position.x = 0;
     this.phyBox.position.z = 0;
+
     // 物理更新
     this.group.position.copy(this.phyBox.position);
     this.group.quaternion.copy(this.phyBox.quaternion);

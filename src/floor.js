@@ -19,9 +19,9 @@ export class Floor {
     // 物理設定のサイズをボックスで描画
     let cubeGeometry = new THREE.BoxGeometry(size[0], size[1], size[2]);
     let cubeMaterial = new THREE.MeshStandardMaterial({
-      color: "white",
-      transparent: true,
-      opacity: 0.3,
+      color: "#cda16f",
+      // transparent: true,
+      // opacity: 0.3,
     });
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     cube.position.set(position[0], position[1], position[2]);

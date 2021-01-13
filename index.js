@@ -38,7 +38,7 @@ class Jumper {
     this.floor = new Floor(
       this.scene,
       this.cannonPhysics,
-      [150, 0.5, 30],
+      [500, 0.5, 50],
       [0, 0, 0]
     );
     //glTFの読み込み
@@ -134,8 +134,8 @@ class Jumper {
     const hemiLight = new THREE.HemisphereLight(0x888888, 0x000000, 1);
     this.scene.add(hemiLight);
     //座標軸を表示 x=red y=green z=blue
-    var axis = new THREE.AxesHelper(1000);
-    this.scene.add(axis);
+    // var axis = new THREE.AxesHelper(1000);
+    // this.scene.add(axis);
   }
 
   /**
