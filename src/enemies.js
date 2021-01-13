@@ -207,6 +207,11 @@ export class Enemy {
       .then((value) => {
         value.scene.position.copy(this.data.type.obj.position);
         value.scene.rotation.y = this.data.type.obj.rotation;
+        value.scene.traverse(function (node) {
+          if (node.isMesh) {
+            node.castShadow = true;
+          }
+        });
         this.group.add(value.scene);
       })
       .catch((error) => {

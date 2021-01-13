@@ -32,9 +32,10 @@ export class Player {
       transparent: true,
       opacity: 0.3,
       // コライダーを非表示
-      visible: false,
+      // visible: false,
     });
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    // cube.castShadow = true;
     this.group.add(cube);
     scene.add(this.group);
     this.toTheNextScene = false;
