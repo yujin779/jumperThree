@@ -2,9 +2,6 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import CANNON from "cannon";
 
-import bigCactus from "../assets/gltf/bigCactus.glb";
-import littleCactus from "../assets/gltf/littleCactus.glb";
-
 import cactus1 from "../assets/gltf/cactus1.glb";
 import cactus2 from "../assets/gltf/cactus2.glb";
 import chicken from "../assets/gltf/chicken.glb";
@@ -109,11 +106,21 @@ export class Enemies {
     this.enemiesData = [];
     for (let i = 0; i < number; i++) {
       let p = startX;
+      let type =
+        TypesOfEnemies[Math.floor(Math.random() * TypesOfEnemies.length)];
       if (i !== 0) p = this.enemiesData[i - 1].positionX + distance;
+
+      if (i > 3) {
+        let bird = false;
+        for (let y = i - 1; y > i - 4; y--) {
+          if (this.enemiesData[y].type.obj.name === "bird") bird = true;
+        }
+        if (!bird) type = TypesOfEnemies[3];
+      }
 
       this.enemiesData.push({
         positionX: p,
-        type: TypesOfEnemies[Math.floor(Math.random() * TypesOfEnemies.length)],
+        type: type,
       });
     }
   }
