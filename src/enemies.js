@@ -5,29 +5,62 @@ import CANNON from "cannon";
 import bigCactus from "../assets/gltf/bigCactus.glb";
 import littleCactus from "../assets/gltf/littleCactus.glb";
 
+import cactus1 from "../assets/gltf/cactus1.glb";
+import cactus2 from "../assets/gltf/cactus2.glb";
+import chicken from "../assets/gltf/chicken.glb";
+import bird from "../assets/gltf/bird.glb";
+
 const TypesOfEnemies = [
   {
     obj: {
-      name: "littleCactus",
+      name: "cactus1",
       gltfNum: 0,
-      gltf: littleCactus,
-      position: { x: -2.75, y: 0.4, z: -0.2 },
-      rotation: { x: 1.5 },
+      gltf: cactus1,
+      position: { x: 0.4, y: 0.2, z: 0.4 },
+      rotation: 1.5,
     },
     colider: {
-      args: [1.2, 3, 1],
+      args: [1.5, 2.5, 1],
+      position: { y: 0.2 },
     },
   },
   {
     obj: {
-      name: "bigCactus",
+      name: "cactus2",
       gltfNum: 1,
-      gltf: bigCactus,
-      position: { x: -3.9, y: 0.4, z: -1.7 },
-      rotation: { x: 1.5 },
+      gltf: cactus2,
+      position: { x: 0.2, y: 0, z: 0 },
+      rotation: 1.5,
     },
     colider: {
-      args: [0.6, 5.5, 1],
+      args: [0.6, 5, 1],
+      position: { y: 0.4 },
+    },
+  },
+  {
+    obj: {
+      name: "chicken",
+      gltfNum: 2,
+      gltf: chicken,
+      position: { x: 0.2, y: 0, z: 0 },
+      rotation: 1.5,
+    },
+    colider: {
+      args: [0.8, 2, 1],
+      position: { y: 0.5 },
+    },
+  },
+  {
+    obj: {
+      name: "bird",
+      gltfNum: 3,
+      gltf: bird,
+      position: { x: 0.2, y: -3.2, z: 0 },
+      rotation: 1.5,
+    },
+    colider: {
+      args: [0.8, 0.8, 1],
+      position: { y: 5 },
     },
   },
 ];
@@ -138,7 +171,7 @@ export class Enemy {
     this.phyBox = new CANNON.Body({ mass, shape });
     this.phyBox.fixedRotation = true;
     this.phyBox.name = "enemy";
-    // this.phyBox.position.y = 5;
+    this.phyBox.position.y = this.data.type.colider.position.y;
     this.phyBox.position.x = data.positionX;
     cannonPhysics.world.add(this.phyBox);
 
@@ -149,14 +182,15 @@ export class Enemy {
       data.type.colider.args[2]
     );
     let cubeMaterial = new THREE.MeshStandardMaterial({
-      color: "blue",
+      color: "yellow",
       transparent: true,
       opacity: 0.3,
       // コライダーを非表示
       visible: false,
     });
-    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    this.group.add(cube);
+    this.cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    // this.cube.rotation.y = this.data.type.obj.rotation[this.randRotation];
+    this.group.add(this.cube);
     group.add(this.group);
     this.group.position.copy(this.phyBox.position);
   }
@@ -172,6 +206,7 @@ export class Enemy {
     this.gltfLoad(url)
       .then((value) => {
         value.scene.position.copy(this.data.type.obj.position);
+        value.scene.rotation.y = this.data.type.obj.rotation;
         this.group.add(value.scene);
       })
       .catch((error) => {

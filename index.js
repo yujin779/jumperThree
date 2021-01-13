@@ -1,5 +1,5 @@
 import * as THREE from "three";
-// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import CANNON from "cannon";
 import Stats from "stats.js";
 import { Player } from "./src/player";
@@ -146,9 +146,8 @@ class Jumper {
     this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 1000);
     this.camera.position.set(-15, 12, 30);
     // this.camera.position.set(-15, 60, 60);
+    // this.camera.position.set(0, 30, 0);
     this.camera.lookAt(new THREE.Vector3(10, 0, 0));
-
-    // this.controls = new OrbitControls(this.camera);
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("#191919");
@@ -158,6 +157,7 @@ class Jumper {
       powerPreference: "high-performance",
       antialias: true,
     });
+    // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
     document.body.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.onWindowResize);
