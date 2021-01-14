@@ -22,6 +22,7 @@ export class Player {
     );
     this.phyBox = new CANNON.Body({ mass, shape });
     this.phyBox.fixedRotation = true;
+    this.phyBox.name = "player";
     this.initPosition();
     cannonPhysics.world.add(this.phyBox);
 

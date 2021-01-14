@@ -19,6 +19,7 @@ const TypesOfEnemies = [
     colider: {
       args: [1.5, 2.5, 1],
       position: { y: 0.2 },
+      category: "enemy",
     },
   },
   {
@@ -32,6 +33,7 @@ const TypesOfEnemies = [
     colider: {
       args: [0.6, 5, 1],
       position: { y: 0.4 },
+      category: "enemy",
     },
   },
   {
@@ -45,6 +47,7 @@ const TypesOfEnemies = [
     colider: {
       args: [0.8, 2, 1],
       position: { y: 0.5 },
+      category: "food",
     },
   },
   {
@@ -58,6 +61,7 @@ const TypesOfEnemies = [
     colider: {
       args: [0.8, 0.8, 1],
       position: { y: 5 },
+      category: "enemy",
     },
   },
 ];
@@ -164,7 +168,6 @@ export class Enemy {
   constructor(scene, cannonPhysics, data, group) {
     this.data = data;
     this.group = new THREE.Group();
-    this.load(data.type.obj.gltf);
 
     // 物理設定
     var mass = 0;
@@ -177,8 +180,10 @@ export class Enemy {
     );
     this.phyBox = new CANNON.Body({ mass, shape });
     this.phyBox.fixedRotation = true;
-    this.phyBox.name = "enemy";
+    console.log(data.type.colider.category);
+    this.phyBox.name = data.type.colider.category;
     this.phyBox.position.y = this.data.type.colider.position.y;
+
     this.phyBox.position.x = data.positionX;
     cannonPhysics.world.add(this.phyBox);
 
@@ -200,26 +205,46 @@ export class Enemy {
     this.group.add(this.cube);
     group.add(this.group);
     this.group.position.copy(this.phyBox.position);
+
+    this.load(data.type.obj.gltf);
   }
 
   tick(x) {
     this.phyBox.position.x = x;
+    console.log("gltf", this.gltfObj);
+
     // 物理更新
     this.group.position.copy(this.phyBox.position);
+    if (x > 20 && this.gltfObj) this.gltfObj.scene.visible = true;
   }
 
   load(url) {
     // プレイヤー
     this.gltfLoad(url)
       .then((value) => {
-        value.scene.position.copy(this.data.type.obj.position);
-        value.scene.rotation.y = this.data.type.obj.rotation;
-        value.scene.traverse(function (node) {
+        this.gltfObj = value;
+        this.gltfObj.scene.position.copy(this.data.type.obj.position);
+        this.gltfObj.scene.rotation.y = this.data.type.obj.rotation;
+        this.gltfObj.scene.traverse(function (node) {
           if (node.isMesh) {
             node.castShadow = true;
           }
         });
-        this.group.add(value.scene);
+        this.group.add(this.gltfObj.scene);
+        if (this.phyBox.name !== "enemy") {
+          this.phyBox.collisionResponse = 0;
+          // 当たり判定
+          this.phyBox.addEventListener("collide", (e) => {
+            // console.log(e.contact);
+            if (
+              e.contact.bi.name === "player" ||
+              e.contact.bj.name === "player"
+            ) {
+              console.log("eat");
+              this.gltfObj.scene.visible = false;
+            }
+          });
+        }
       })
       .catch((error) => {
         console.error(error);

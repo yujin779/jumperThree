@@ -54,6 +54,7 @@ class Jumper {
     this.count = 0;
     this.runningSpeed = 0.15;
 
+    console.log("player", this.player);
     // クリック挙動設定
     this.click = () => {
       switch (this.gameScene) {
