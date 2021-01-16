@@ -33,7 +33,8 @@ class Jumper {
     // 灯りを設置
     this.defaultLigts();
     //物理計算
-    this.cannonPhysics = new CannonPhysics();
+    this.cannonPhysics = new CannonPhysics(-30);
+    this.jumpPower = 25;
     //床のオブジェクト
     this.floor = new Floor(
       this.scene,
@@ -65,7 +66,7 @@ class Jumper {
         case SCENE.Playing:
           if (this.player.landing) {
             this.player.phyBox.applyImpulse(
-              new CANNON.Vec3(0, 25, 0),
+              new CANNON.Vec3(0, this.jumpPower, 0),
               new CANNON.Vec3(0, 0, 0)
             );
             this.player.landing = false;
@@ -210,7 +211,7 @@ class Jumper {
       case SCENE.Playing:
         // console.log("playingnext", this.player.toTheNextScene);
         if (this.player && this.enemies) {
-          this.cannonPhysics.world.step(1 / 60);
+          this.cannonPhysics.world.step(1 / (9 / this.runningSpeed));
           this.count++;
           if (this.count % 300 === 0) this.runningSpeed += 0.01;
           this.player.tick();
