@@ -33,7 +33,7 @@ export class GameOver {
       opacity: 0.7,
     });
     this.background = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    this.background.position.set(7.5, 2, 15);
+    this.background.position.set(7.5, 2, 14);
     this.group.add(this.background);
     this.toTheNextScene = false;
   }

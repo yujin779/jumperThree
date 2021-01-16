@@ -81,8 +81,8 @@ export class Enemies {
     // このx位置になったら位置を再設定
     this.returnX = -25;
     // オブジェクト間の距離
-    this.distance = 20;
-    this.addMaxDistance = 30;
+    this.distance = 18;
+    this.addMaxDistance = 9;
     // 最初の位置データを作成
     this.createEnemiesList(this.number, this.startX, this.distance);
 
@@ -115,11 +115,14 @@ export class Enemies {
       if (i !== 0) p = this.enemiesData[i - 1].positionX + distance;
 
       if (i > 3) {
-        let bird = false;
-        for (let y = i - 1; y > i - 4; y--) {
-          if (this.enemiesData[y].type.obj.name === "bird") bird = true;
-        }
-        if (!bird) type = TypesOfEnemies[3];
+        // let bird = false;
+        // for (let y = i - 1; y > i - 4; y--) {
+        //   if (this.enemiesData[y].type.obj.name === "bird") bird = true;
+        // }
+        // if (!bird) type = TypesOfEnemies[3];
+        if ((this.enemiesData[i - 1].type.obj.name = type.obj.name))
+          type =
+            TypesOfEnemies[Math.floor(Math.random() * TypesOfEnemies.length)];
       }
 
       this.enemiesData.push({

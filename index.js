@@ -90,7 +90,7 @@ class Jumper {
   resetData() {
     this.score = 0;
     this.count = 0;
-    this.runningSpeed = 0.15;
+    this.runningSpeed = 0.2;
     this.player.initPosition();
     this.enemies.reset();
   }
@@ -163,7 +163,7 @@ class Jumper {
    */
   init() {
     this.aspect = window.innerWidth / window.innerHeight;
-    this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 1000);
+    this.camera = new THREE.PerspectiveCamera(50, this.aspect, 1, 130);
     this.camera.position.set(-15, 12, 30);
     // this.camera.position.set(-15, 60, 60);
     // this.camera.position.set(0, 30, 0);
