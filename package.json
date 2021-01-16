@@ -1,11 +1,12 @@
 {
   "name": "threejs-bare-example",
   "version": "1.0.0",
+
   "description": "fork it and use as a template for your questions or experiments.",
   "main": "index.html",
   "scripts": {
     "start": "parcel index.html --open",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html -d build --public-url /app/samples/69/"
   },
   "dependencies": {
     "cannon": "0.6.2",
